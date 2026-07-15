@@ -1,5 +1,6 @@
 const express = require('express');
 const authRoutes = require('./routes/authRoutes');
+const productRoutes = require('./routes/productRoutes');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const PORT = 3000;
@@ -15,6 +16,11 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
+app.use('/api/product', productRoutes);
+
+app.get("/", (req, res) => {
+    res.send("Backend is running");
+});
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
