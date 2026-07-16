@@ -41,6 +41,17 @@ export default function CreateProductPage() {
     }
   };
 
+  const handleReset = async (e) => {
+    setFormData({
+      name: "",
+      price: "",
+      category: "",
+      sku: "",
+      image: "",
+      description: "",
+    });
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center py-10 px-4">
       <div className="w-full max-w-3xl rounded-2xl shadow-xl overflow-hidden">
@@ -55,6 +66,20 @@ export default function CreateProductPage() {
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Product Image */}
+            {formData.image && (
+              <div className="mt-4">
+                <img
+                  src={formData.image}
+                  alt="Preview"
+                  className="w-40 h-40 object-cover rounded-lg border"
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                  }}
+                />
+              </div>
+            )}
+
             {/* Product Name */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -155,6 +180,7 @@ export default function CreateProductPage() {
           <div className="flex justify-end gap-4 mt-8">
             <button
               type="reset"
+              onClick={handleReset}
               className="px-6 cursor-pointer py-3 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
             >
               Reset

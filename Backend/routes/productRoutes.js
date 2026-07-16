@@ -11,9 +11,9 @@ const {
 
 router.post('/', createProduct);
 
-router.get('/', getProducts);
+router.get('/', getProducts);   // get all products
 
-router.get('/', getProduct);
+router.get('/:id', getProduct);  // get one product
 
 router.put('/:id',updateProduct);
 
