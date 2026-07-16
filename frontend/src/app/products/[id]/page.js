@@ -1,0 +1,1 @@
+// Show single product details
