@@ -26,7 +26,7 @@ export default function ProductsPage() {
   }, []);
 
   const handleRoute = (id) => {
-    router.push(`/products/${id}`);
+    router.push(`/admin/products/${id}`);
   }
 
   return (

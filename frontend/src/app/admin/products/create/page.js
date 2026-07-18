@@ -35,7 +35,7 @@ export default function CreateProductPage() {
         formData,
       );
 
-      router.push("/products");
+      router.push("/admin/products");
     } catch (error) {
       console.log(error);
     }

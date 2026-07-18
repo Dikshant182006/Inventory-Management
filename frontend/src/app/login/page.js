@@ -2,10 +2,13 @@
 
 import { useState } from "react";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const router = useRouter()
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -19,6 +22,8 @@ export default function LoginPage() {
       }
     );
   
+    router.push('/admin/products')
+
     console.log(response.data);
     } catch(error) {
       console.log(error);      

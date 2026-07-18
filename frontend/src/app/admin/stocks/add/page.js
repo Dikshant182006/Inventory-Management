@@ -11,19 +11,19 @@ export default function AddPage() {
   });
 
   useEffect(() => {
-    const handleProduct = async() => {
-      try{
-        const response = await axios.get("http://localhost:3000/api/product",)
-  
+    const handleProduct = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/api/product");
+
         setProducts(response.data.products);
-      } catch(error) {
+      } catch (error) {
         console.log(error);
       }
-    }
+    };
 
     handleProduct();
-  }, [])
-  
+  }, []);
+
   const handleStock = async (e) => {
     e.preventDefault();
 
@@ -40,8 +40,7 @@ export default function AddPage() {
 
     setformData({
       quantity: "",
-    })
-
+    });
   };
 
   const handleChange = (e) => {
@@ -49,7 +48,7 @@ export default function AddPage() {
 
     setformData({
       ...formData,
-      [name]: name === "quantity"? Number(value): value,
+      [name]: name === "quantity" ? Number(value) : value,
     });
   };
 
@@ -61,7 +60,8 @@ export default function AddPage() {
         {/* Product Select */}
         <div className="mb-4">
           <label className="block mb-2 font-medium">Select Product</label>
-          <select name="productId"
+          <select
+            name="productId"
             onChange={handleChange}
             className="w-full border p-2 rounded bg-black"
           >
@@ -86,7 +86,7 @@ export default function AddPage() {
             onChange={handleChange}
             placeholder="Enter quantity"
             className="w-full border p-2 rounded"
-          />        
+          />
         </div>
 
         {/* Button */}
