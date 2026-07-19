@@ -34,8 +34,9 @@ model Product {
   stock      Stock?
   orderItems OrderItem[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  stockHistory StockHistory[]
 }
 
 // Stores how many items are available
@@ -72,4 +73,19 @@ model OrderItem {
 
   order   Order   @relation(fields: [orderId], references: [id])
   product Product @relation(fields: [productId], references: [id])
+}
+
+// stockHistory
+model StockHistory {
+  id            Int @id @default(autoincrement())
+  productId     Int
+  productName   String
+
+  product Product @relation(fields: [productId], references: [id])
+
+  type String
+  quantity Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

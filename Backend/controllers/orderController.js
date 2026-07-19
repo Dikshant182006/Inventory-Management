@@ -1,12 +1,30 @@
-const { PrivateResultType } = require("@prisma/client/runtime/library");
 const prisma = require("../prisma/client");
 
 // Create Order
 const createOrder = async (req, res) => {
   try {
-    const { customerName, totalAmount, productId, quantity, price, status } =
-      req.body;
+    const { customerName, status } = req.body;
 
+    const productId = Number(req.body.productId);
+    const quantity = Number(req.body.quantity);
+    const price = Number(req.body.price);
+    const totalAmount = Number(req.body.totalAmount);
+
+    const stock = await prisma.stock.findUnique({
+      where: {
+        productId: Number(productId),
+      },
+    });
+
+    if (!stock) {
+      return res.status(404).json({ message: "Stock not found" });
+    }
+
+    if (stock.quantity < quantity) {
+      return res.status(400).json({ message: "Insuffient stock" });
+    }
+
+    // creates order
     const order = await prisma.order.create({
       data: {
         customerName,
@@ -15,6 +33,7 @@ const createOrder = async (req, res) => {
       },
     });
 
+    // orderItem
     const orderItem = await prisma.orderItem.create({
       data: {
         orderId: order.id,
@@ -24,6 +43,7 @@ const createOrder = async (req, res) => {
       },
     });
 
+    // decrease stock
     await prisma.stock.update({
       where: {
         productId: productId,
@@ -32,6 +52,26 @@ const createOrder = async (req, res) => {
         quantity: {
           decrement: quantity,
         },
+      },
+    });
+
+    // create orderHistory
+    const product = await prisma.product.findUnique({
+      where: {
+        id: Number(productId),
+      },
+    });
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    await prisma.stockHistory.create({
+      data: {
+        productId: Number(productId),
+        productName: product.name,
+        type: "ORDER_CREATED",
+        quantity: quantity,
       },
     });
 
@@ -152,7 +192,7 @@ const deleteOrder = async (req, res) => {
       },
     });
 
-    await prisma.order.delete({
+    await prisma.orderItem.delete({
       where: {
         id: Number(id),
       },

@@ -3,6 +3,7 @@ const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
 const stockRoutes = require('./routes/stockRoutes');
 const orderRoutes = require('./routes/orderRoutes');
+const historyRoutes = require('./routes/historyRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
@@ -22,6 +23,7 @@ app.use("/api/auth", authRoutes);
 app.use('/api/product', productRoutes);
 app.use('/api/stock', stockRoutes);
 app.use('/api/order', orderRoutes);
+app.use('/api/history', historyRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 
 app.get("/", (req, res) => {
