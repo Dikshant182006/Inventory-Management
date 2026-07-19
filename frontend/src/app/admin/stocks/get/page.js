@@ -20,6 +20,10 @@ export default function StockPage() {
         loadData();
     }, [])
 
+    const handleClick = () => {
+
+    }
+
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold mb-5 text-center">All Stock</h1>
@@ -40,9 +44,8 @@ export default function StockPage() {
               <td className="border p-2">{stock.id}</td>
               <td className="border p-2">{stock.product.name}</td>
               <td className="border p-2">{stock.quantity}</td>
-
               <td>
-                <button className="p-2 text-red-600 cursor-pointer">Remove</button>
+                <button onClick={handleClick} className="p-2 text-red-600 cursor-pointer">Remove</button>
               </td>
             </tr>
             ))}

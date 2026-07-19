@@ -2,6 +2,7 @@
 
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function AddPage() {
   const [products, setProducts] = useState([]);
@@ -24,6 +25,8 @@ export default function AddPage() {
     handleProduct();
   }, []);
 
+  const router = useRouter();
+
   const handleStock = async (e) => {
     e.preventDefault();
 
@@ -34,6 +37,7 @@ export default function AddPage() {
       );
 
       console.log(response.data);
+      router.push('/admin/stocks/get')
     } catch (error) {
       console.log(error);
     }

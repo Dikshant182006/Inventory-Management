@@ -3,6 +3,7 @@ const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
 const stockRoutes = require('./routes/stockRoutes');
 const orderRoutes = require('./routes/orderRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const PORT = 3000;
@@ -21,6 +22,7 @@ app.use("/api/auth", authRoutes);
 app.use('/api/product', productRoutes);
 app.use('/api/stock', stockRoutes);
 app.use('/api/order', orderRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 app.get("/", (req, res) => {
     res.send("Backend is running");

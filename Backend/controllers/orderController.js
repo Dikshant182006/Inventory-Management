@@ -4,7 +4,8 @@ const prisma = require("../prisma/client");
 // Create Order
 const createOrder = async (req, res) => {
   try {
-    const { customerName, totalAmount, productId, quantity, price, status } = req.body;
+    const { customerName, totalAmount, productId, quantity, price, status } =
+      req.body;
 
     const order = await prisma.order.create({
       data: {
@@ -48,6 +49,36 @@ const createOrder = async (req, res) => {
   }
 };
 
+// Get Order History
+const getOrderHistory = async (req, res) => {
+  try {
+    const orders = await prisma.order.findMany({
+      where: {
+        status: {
+          in: ["SHIPPED", "DELIVERED", "CANCELLED"],
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        orderItems: {
+          include: {
+            product: true,
+          },
+        },
+      },
+    });
+
+    res.status(200).json(orders);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 // get all Order
 const getOrders = async (req, res) => {
   try {
@@ -76,12 +107,12 @@ const getOrderById = async (req, res) => {
         orderItems: {
           include: {
             product: true,
-          }
-        }
+          },
+        },
       },
     });
 
-    return res.status(200).json({ message: "Get the single order!" , order});
+    return res.status(200).json({ message: "Get the single order!", order });
   } catch (error) {
     console.log(error);
   }
@@ -112,29 +143,30 @@ const updateOrderStatus = async (req, res) => {
 
 // Delete Order
 const deleteOrder = async (req, res) => {
-    try{
-        const { id } = req.params;
-      
-        await prisma.orderItems.deleteMany({
-          where: {
-            orderId: Number(order.id),
-          },
-        });
-      
-        await prisma.order.delete({
-          where: {
-            id: Number(id),
-          },
-        });
-      
-        return res.status(200).json({ message: "Order deleted Successfully!" });
-    } catch(error) {
-        console.log(error);
-    }
+  try {
+    const { id } = req.params;
+
+    await prisma.orderItems.deleteMany({
+      where: {
+        orderId: Number(order.id),
+      },
+    });
+
+    await prisma.order.delete({
+      where: {
+        id: Number(id),
+      },
+    });
+
+    return res.status(200).json({ message: "Order deleted Successfully!" });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 module.exports = {
   createOrder,
+  getOrderHistory,
   getOrders,
   getOrderById,
   updateOrderStatus,
