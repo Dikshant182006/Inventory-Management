@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { Princess_Sofia } from "next/font/google";
+import { getDefineEnv } from "next/dist/build/define-env";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -102,6 +104,31 @@ export default function DashboardPage() {
     getProducts();
   }, []);
 
+  const handleRemove = async (id) => {
+    console.log("Delete clicked", id);
+
+    const confirmDelete = confirm(
+      `Are you sure you want to remove Order #${id}?`,
+    );
+
+    if (!confirmDelete) return;
+    try {
+       console.log("Calling API");
+      const response = await axios.delete(
+        `http://localhost:3000/api/order/${id}`,
+      );
+
+      alert(response.data.message);
+      console.log(response.data);
+
+      fetchOrderHistory();
+      getdetails();
+    } catch (error) {
+      console.log(error);
+      alert(error.response?.data?.message || "Something went wrong");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black text-white p-8">
       {/* NAVBAR */}
@@ -177,6 +204,8 @@ export default function DashboardPage() {
                   <th className="text-left p-3">Amount</th>
 
                   <th className="text-left p-3">Status</th>
+
+                  <th className="text-center p-3">Active</th>
                 </tr>
               </thead>
 
@@ -190,6 +219,13 @@ export default function DashboardPage() {
                     <td className="p-3">₹{order.totalAmount}</td>
 
                     <td className="p-3">{order.status}</td>
+
+                    <td
+                      onClick={() => handleRemove(order.id)}
+                      className="text-red-500 cursor-pointer text-center"
+                    >
+                      Remove
+                    </td>
                   </tr>
                 ))}
               </tbody>

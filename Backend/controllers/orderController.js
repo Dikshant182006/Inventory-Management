@@ -139,6 +139,8 @@ const getOrderById = async (req, res) => {
   try {
     const { id } = req.params;
 
+    console.log("Order ID:", id);
+
     const order = await prisma.order.findUnique({
       where: {
         id: Number(id),
@@ -186,13 +188,49 @@ const deleteOrder = async (req, res) => {
   try {
     const { id } = req.params;
 
-    await prisma.orderItems.deleteMany({
+    // find all products in the order
+    const orderItems = await prisma.orderItem.findMany({
       where: {
-        orderId: Number(order.id),
+        orderId: Number(id),
+      },
+      include: {
+        product: true,
       },
     });
 
-    await prisma.orderItem.delete({
+    // restore stock
+    for (const item of orderItems) {
+      await prisma.stock.update({
+        where: {
+          productId: item.productId,
+        },
+        data: {
+          quantity: {
+            increment: item.quantity,
+          },
+        },
+      });
+
+      // create history
+      await prisma.stockHistory.create({
+        data: {
+          productId: item.productId,
+          productName: item.product.name,
+          type: "ORDER_REMOVED",
+          quantity: item.quantity,
+        },
+      });
+    }
+
+    // delete order Item
+    await prisma.orderItem.deleteMany({
+      where: {
+        orderId: Number(id),
+      },
+    });
+
+    // Delete the order
+    await prisma.order.delete({
       where: {
         id: Number(id),
       },
@@ -201,6 +239,10 @@ const deleteOrder = async (req, res) => {
     return res.status(200).json({ message: "Order deleted Successfully!" });
   } catch (error) {
     console.log(error);
+
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
   }
 };
 

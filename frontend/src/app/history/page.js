@@ -61,16 +61,22 @@ export default function HistoryPage() {
                       Order Created
                     </span>
                   )}
+                  
+                  {item.type === "ORDER_REMOVED" && (
+                    <span className="text-green-500 font-semibold">
+                      Order Removed
+                    </span>
+                  )}
                 </td>
 
                 <td
                   className={`p-4 font-bold ${
-                    item.type === "ADD_STOCK"
+                    item.type === "ADD_STOCK" || item.type === "ORDER_REMOVED"
                       ? "text-green-500"
                       : "text-red-500"
                   }`}
                 >
-                  {item.type === "ADD_STOCK"
+                  {item.type === "ADD_STOCK" || item.type === "ORDER_REMOVED"
                     ? `+${item.quantity}`
                     : `-${item.quantity}`}
                 </td>
