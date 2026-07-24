@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
@@ -10,7 +10,7 @@ export default function LoginPage() {
 
   const router = useRouter();
 
-  const handleLogin = async (e) => {
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {

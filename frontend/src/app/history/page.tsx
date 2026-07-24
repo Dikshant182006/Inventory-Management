@@ -3,15 +3,27 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-export default function HistoryPage() {
-  const [history, setHistory] = useState([]);
+interface HistoryItem  {
+    id: number,
+    productName: string,
+    type: | "ADD_STOCK"
+    | "REMOVE_STOCK"
+    | "ORDER_CREATED"
+    | "ORDER_REMOVED",
+    quantity: string,
+    createdAt: string,
+}
 
-  const fetchHistory = async () => {
+export default function HistoryPage() {
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+
+  const fetchHistory = async (): Promise<void> => {
     try {
-      const response = await axios.get("http://localhost:3000/api/history");
+      const response = await axios.get<{ history: HistoryItem[] }>
+      ("http://localhost:3000/api/history");
 
       setHistory(response.data.history);
-    } catch (error) {
+    } catch (error: unknown) {
       console.log(error);
     }
   };

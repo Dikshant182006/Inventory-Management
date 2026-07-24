@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { FormEvent, useState } from "react";  
 import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
@@ -11,7 +11,7 @@ export default function SignupPage() {
   
   const router = useRouter();
 
-  const handleSignup = async (e) => {
+  const handleSignup = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try{
