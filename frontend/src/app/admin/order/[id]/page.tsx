@@ -4,15 +4,34 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "next/navigation";
 
+interface Product {
+  id: number;
+  name: string;
+}
+
+interface OrderItem {
+  id: number;
+  quantity: number;
+  price: number;
+  productId: number;
+}
+
+interface Order {
+  id: number;
+  customerName: string;
+  totalAmount: number;
+  status: "PENDING" | "SHIPPED" | "DELIVERED";
+  orderItems: OrderItem[];
+}
+
 export default function OrderDetailsPage() {
   const { id } = useParams();
-
-  const [orders, setOrders] = useState(null);
+  const [orders, setOrders] = useState<Order | null>(null);
 
   useEffect(() => {
     const getOrder = async () => {
       try {
-        const response = await axios.get(
+        const response = await axios.get<Order>(
           `http://localhost:3000/api/order/${id}`,
         );
 

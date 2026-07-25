@@ -4,10 +4,20 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 
-export default function ProductDetailsPage() {
-  const [product, setProduct] = useState(null);
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  category: string;
+  sku: string;
+  description: string;
+  image: string;
+}
 
-  const { id } = useParams();
+export default function ProductDetailsPage() {
+  const [product, setProduct] = useState<Product | null>(null);
+
+  const { id } = useParams<{id: string}>();
   const router = useRouter();
 
   useEffect(() => {
@@ -16,7 +26,7 @@ export default function ProductDetailsPage() {
 
   const fetchProduct = async () => {
     try {
-      const response = await axios.get(
+      const response = await axios.get<Product>(
         `http://localhost:3000/api/product/${id}`
       );
 

@@ -1,18 +1,25 @@
 "use client";
 
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
+interface Order {
+  id: number;
+  customerName: string;
+  totalAmount: number;
+  status: "PENDING" | "SHIPPED" | "DELIVERED";
+}
+
 export default function OrdersPage() {
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState<Order[]>([]);
 
   const router = useRouter();
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/order");
+        const response = await axios.get<{orders: Order[]}>("http://localhost:3000/api/order");
         setOrders(response.data.orders);
       } catch (error) {
         console.log(error);
@@ -22,7 +29,7 @@ export default function OrdersPage() {
     fetchOrders();
   }, []);
 
-  const handleOrder = (id) => {
+  const handleOrder = (id: number) => {
     router.push(`/admin/order/${id}`);
   }
 

@@ -3,13 +3,39 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { Princess_Sofia } from "next/font/google";
-import { getDefineEnv } from "next/dist/build/define-env";
+
+interface FormData {
+  customerName: string;
+  productId: string;
+  quantity: string;
+  price: string;
+  totalAmount: string;
+  status: "PENDING" | "SHIPPED" | "DELIVERED";
+}
+
+interface Dashboard {
+  totalProducts: number;
+  stock: number;
+  totalOrders: number;
+  pendingOrder: number;
+}
+
+interface RecentOrder {
+  id: number;
+  customerName: string;
+  totalAmount: number;
+  status: "PENDING" | "SHIPPED" | "DELIVERED";
+}
+
+interface Product {
+  id: number;
+  name: string;
+}
 
 export default function DashboardPage() {
   const router = useRouter();
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     customerName: "",
     productId: "",
     quantity: "",
@@ -18,13 +44,15 @@ export default function DashboardPage() {
     status: "PENDING",
   });
 
-  const [recentOrder, setRecentOrder] = useState([]);
-  const [dashboard, setDashboard] = useState({});
-  const [products, setProducts] = useState([]);
+  const [recentOrder, setRecentOrder] = useState<RecentOrder[]>([]);
+  const [dashboard, setDashboard] = useState<Dashboard | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
 
-  const getdetails = async () => {
+  const getDetails = async (): Promise<void> => {
     try {
-      const response = await axios.get("http://localhost:3000/api/dashboard");
+      const response = await axios.get<Dashboard>(
+        "http://localhost:3000/api/dashboard",
+      );
 
       setDashboard(response.data);
     } catch (error) {
@@ -32,7 +60,9 @@ export default function DashboardPage() {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>,
+  ): Promise<void> => {
     e.preventDefault();
 
     try {
@@ -51,7 +81,7 @@ export default function DashboardPage() {
       fetchOrderHistory();
 
       // update dashboard cards
-      getdetails();
+      getDetails();
 
       alert("Order Created Successfully");
 
@@ -69,9 +99,9 @@ export default function DashboardPage() {
     }
   };
 
-  const fetchOrderHistory = async () => {
+  const fetchOrderHistory = async (): Promise<void> => {
     try {
-      const response = await axios.get(
+      const response = await axios.get<RecentOrder[]>(
         "http://localhost:3000/api/order/history",
       );
 
@@ -81,9 +111,11 @@ export default function DashboardPage() {
     }
   };
 
-  const getProducts = async () => {
+  const getProducts = async (): Promise<void> => {
     try {
-      const response = await axios.get("http://localhost:3000/api/product");
+      const response = await axios.get<{ products: Product[] }>(
+        "http://localhost:3000/api/product",
+      );
 
       setProducts(response.data.products);
     } catch (error) {
@@ -91,20 +123,28 @@ export default function DashboardPage() {
     }
   };
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
   useEffect(() => {
-    getdetails();
+    getDetails();
     fetchOrderHistory();
     getProducts();
   }, []);
 
-  const handleRemove = async (id) => {
+  if (!dashboard) {
+    return <p>Loading...</p>;
+  }
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ): void => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleRemove = async (id: number): Promise<void> => {
     console.log("Delete clicked", id);
 
     const confirmDelete = confirm(
@@ -113,7 +153,7 @@ export default function DashboardPage() {
 
     if (!confirmDelete) return;
     try {
-       console.log("Calling API");
+      console.log("Calling API");
       const response = await axios.delete(
         `http://localhost:3000/api/order/${id}`,
       );
@@ -122,10 +162,13 @@ export default function DashboardPage() {
       console.log(response.data);
 
       fetchOrderHistory();
-      getdetails();
-    } catch (error) {
-      console.log(error);
-      alert(error.response?.data?.message || "Something went wrong");
+      getDetails();
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        alert(error.response?.data?.message);
+      } else {
+        alert("Something went wrong");
+      }
     }
   };
 

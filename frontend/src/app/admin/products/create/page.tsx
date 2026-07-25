@@ -6,8 +6,17 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 
+interface ProductFormData {
+  name: string;
+  price: number | string;
+  category: string;
+  sku: string;
+  image: string;
+  description: string;
+}
+
 export default function CreateProductPage() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ProductFormData>({
     name: "",
     price: "",
     category: "",
@@ -18,7 +27,7 @@ export default function CreateProductPage() {
 
   const router = useRouter();
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -73,8 +82,8 @@ export default function CreateProductPage() {
                   src={formData.image}
                   alt="Preview"
                   className="w-40 h-40 object-cover rounded-lg border"
-                  onError={(e) => {
-                    e.target.style.display = "none";
+                  onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                    e.currentTarget.style.display = "none";
                   }}
                 />
               </div>
